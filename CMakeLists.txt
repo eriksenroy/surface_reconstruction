@@ -7,7 +7,8 @@ project(surface_reconstruction)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS  roscpp std_msgs sensor_msgs image_transport cv_bridge tf)
+
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs image_transport cv_bridge tf )
 
 
 
@@ -31,7 +32,7 @@ include_directories(
         include ${catkin_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         ${Eigen_INCLUDE_DIRS}
-        ${PCL_INCLUDE_DIRS}
+        #${PCL_INCLUDE_DIRS}
         #  LIBRARIES imu_3dm_gx3
         #  CATKIN_DEPENDS other_catkin_pkg
         #  DEPENDS system_lib

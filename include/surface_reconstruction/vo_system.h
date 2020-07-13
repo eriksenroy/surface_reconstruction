@@ -27,8 +27,8 @@ using namespace std;
 
 
 #include <ros/ros.h>
-#include <pcl_ros/point_cloud.h>
-#include <pcl/point_types.h>
+//#include <pcl_ros/point_cloud.h>
+//#include <pcl/point_types.h>
 
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/Imu.h>
@@ -56,10 +56,10 @@ public:
 
     void imgcb(const sensor_msgs::Image::ConstPtr& msg);
 
-    SemiDenseTracking semidense_tracker;
-    SemiDenseMapping semidense_mapper;
-    MapShared Map;
-    Imagenes images, images_previous_keyframe;
+//    SemiDenseTracking semidense_tracker;
+//    SemiDenseMapping semidense_mapper;
+//    MapShared Map;
+//    Imagenes images, images_previous_keyframe;
 
     int cont_frames;
     double stamps;
