@@ -533,7 +533,7 @@ void prepare_image(cv::Mat &image_frame, cv::Mat &image_rgb,cv::Mat &image_to_tr
 
     image_to_track.convertTo(image_to_track, CV_64FC1);
     image_gray = image_to_track.clone();
-
+    //cout<<image_gray<<endl;
     image_to_track /= (255*1.0);
 }
 

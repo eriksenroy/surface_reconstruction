@@ -5,7 +5,7 @@
 #include <surface_reconstruction/vo_system.h>
 #include <fstream>
 #include <iomanip>
-
+#include <iostream>
 #include <ros/package.h>
 
 vo_system::vo_system(){
@@ -18,7 +18,7 @@ vo_system::vo_system(){
     std::string camera_path;
     fs2["camera_path"] >> camera_path;
     cont_frames = 0;
-
+    cout << camera_path<<endl;
     int calculate_superpixels = (int)fs2["calculate_superpixels"];
 
 
@@ -74,7 +74,6 @@ void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg)
     ///read images
     try {
         cv_bridge::CvImageConstPtr cv_ptr;
-
         cv_bridge::toCvShare(msg);
         cv_ptr = cv_bridge::toCvShare(msg);
 

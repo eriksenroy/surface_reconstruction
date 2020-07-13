@@ -14,7 +14,7 @@ distortion: 1
 limit_grad: 0.80
 
 
-camera_path: "/image_raw"
+camera_path: "/camera/rgb/image_color"
 cameraMatrix: !!opencv-matrix
    rows: 3
    cols: 3
