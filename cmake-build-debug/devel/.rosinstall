@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/roy/ros_workspace/src/surface_reconstruction/cmake-build-debug/devel/setup.sh

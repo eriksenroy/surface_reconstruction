@@ -1,0 +1,8 @@
+prefix=/home/roy/ros_workspace/src/surface_reconstruction/cmake-build-debug/devel
+
+Name: surface_reconstruction
+Description: Description of surface_reconstruction
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
