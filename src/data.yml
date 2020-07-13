@@ -7,13 +7,13 @@
   ph_error_th: 0.001
 
   iter_th: 40
-    local_maps_number:5
+  local_maps_number: 5
   local_maps_close_number: 1
   distortion: 1
 
   limit_grad: 0.80
 
-    camera_path:"/camera/rgb/image_color"
+    camera_path: "/camera/rgb/image_color"
 
   cameraMatrix: !!opencv-matrix
     rows: 3
