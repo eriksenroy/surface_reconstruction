@@ -1,9 +1,7 @@
-//
-// Created by roy on 10/7/20.
-//
+#ifndef __VO_SYSTEM_H
+#define __VO_SYSTEM_H
 
-#ifndef SURFACE_RECONSTRUCTION_VO_SYSTEM_H
-#define SURFACE_RECONSTRUCTION_VO_SYSTEM_H
+
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -44,28 +42,34 @@ using namespace std;
 #include <opencv2/highgui/highgui.hpp>
 #include <image_transport/image_transport.h>
 
+#include <surface_reconstruction/superpixel.h>
+#include <surface_reconstruction/DenseMapping.h>
 #include <surface_reconstruction/tracking.h>
 #include <surface_reconstruction/mapping.h>
 
 
+class SemiDenseTracking;
 
 class vo_system
 {
 public:
     vo_system();
 
+
     void imgcb(const sensor_msgs::Image::ConstPtr& msg);
 
-//    SemiDenseTracking semidense_tracker;
-//    SemiDenseMapping semidense_mapper;
-//    MapShared Map;
-//    Imagenes images, images_previous_keyframe;
+
+    DenseMapping dense_mapper;
+    SemiDenseTracking semidense_tracker;
+    SemiDenseMapping semidense_mapper;
+    MapShared Map;
+    Imagenes images,images_previous_keyframe;
 
     int cont_frames;
     double stamps;
-    cv::Mat image_frame, image_frame_aux;
+    cv::Mat image_frame,image_frame_aux;
     double depth_stamps;
-    ros::Time current_time, stamps_ros;
+    ros::Time current_time,stamps_ros;
 
     ros::NodeHandle nh;
     image_transport::Subscriber sub1;
@@ -73,9 +77,10 @@ public:
 
     ros::Publisher odom_pub;
 
+
     ros::Publisher pub_cloud;
     ros::Publisher pub_poses;
     ros::Publisher vis_pub;
-};
 
-#endif //SURFACE_RECONSTRUCTION_VO_SYSTEM_H
+};
+#endif

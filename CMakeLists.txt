@@ -8,7 +8,7 @@ project(surface_reconstruction)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs image_transport cv_bridge tf )
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs image_transport cv_bridge tf pcl_ros )
 
 
 
@@ -19,12 +19,16 @@ set(SR_SOURCE_FILES
         src/mapping.cpp
         src/tracking.cpp
         src/vo_system.cpp
+        src/DenseMapping.cpp
+        src/superpixel.cpp
         )
 
 set(SR_HEADER_FILSES
         include/surface_reconstruction/mapping.h
         include/surface_reconstruction/tracking.h
         include/surface_reconstruction/vo_system.h
+        include/surface_reconstruction/DenseMapping.h
+        include/surface_reconstruction/superpixel.h
         )
 
 find_package(OpenCV REQUIRED)
@@ -32,7 +36,7 @@ include_directories(
         include ${catkin_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
         ${Eigen_INCLUDE_DIRS}
-        #${PCL_INCLUDE_DIRS}
+        ${PCL_INCLUDE_DIRS}
         #  LIBRARIES imu_3dm_gx3
         #  CATKIN_DEPENDS other_catkin_pkg
         #  DEPENDS system_lib

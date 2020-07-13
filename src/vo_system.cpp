@@ -19,7 +19,7 @@ vo_system::vo_system(){
     fs2["camera_path"] >> camera_path;
     cont_frames = 0;
 
-    //int calculate_superpixels = (int)fs2["calculate_superpixels"];
+    int calculate_superpixels = (int)fs2["calculate_superpixels"];
 
 
 
@@ -32,8 +32,8 @@ vo_system::vo_system(){
 
 
     /// advertising 3D map and camera poses in rviz
-    pub_cloud = nh.advertise<sensor_msgs::Image> ("surface_reconstruction/map", 1);
-    pub_poses = nh.advertise<sensor_msgs::Image> ("points_poses", 1);
+    pub_cloud = nh.advertise<sensor_msgs::PointCloud2> ("surface_reconstruction/map", 1);
+    pub_poses = nh.advertise<sensor_msgs::PointCloud2> ("points_poses", 1);
     vis_pub = nh.advertise<visualization_msgs::Marker>( "surface_reconstruction/visualization_marker", 0 );
     /// advertising 3D map and camera poses in rviz
 
@@ -49,18 +49,19 @@ vo_system::vo_system(){
     semidense_tracker.stamps_ros = &stamps_ros ;
 
     ///Launch semidense tracker thread*/
-    //boost::thread thread_semidense_tracker(&ThreadSemiDenseTracker,&images,&semidense_mapper,&semidense_tracker,&Map,&odom_pub,&pub_poses,&vis_pub,&pub_image);
+    boost::thread thread_semidense_tracker(&ThreadSemiDenseTracker,&images,&semidense_mapper,&semidense_tracker,&dense_mapper,&Map,&odom_pub,&pub_poses,&vis_pub,&pub_image);
 
     ///Launch semidense mapper thread
-    //boost::thread thread_semidense_mapper(&ThreadSemiDenseMapper,&images,&images_previous_keyframe,&semidense_mapper,&semidense_tracker,&Map,&pub_cloud);
+    boost::thread thread_semidense_mapper(&ThreadSemiDenseMapper,&images,&images_previous_keyframe,&semidense_mapper,&semidense_tracker,&dense_mapper,&Map,&pub_cloud);
 
 
-   /* if (calculate_superpixels > 0.5)
-    {
-        ///launch dense mapper thread
-        boost::thread thread_dense_mapper(&ThreadDenseMapper,&dense_mapper,&pub_cloud);
-    }
-        */
+
+    if (calculate_superpixels > 0.5)
+     {
+         ///launch dense mapper thread
+         boost::thread thread_dense_mapper(&ThreadDenseMapper,&dense_mapper,&pub_cloud);
+     }
+
     cout << "***    Surface Reconstruction program is working     *** " <<  endl << endl;
     cout << "***    Launch the example sequences or use your own sequence / live camera and update the file 'data.yml' with the corresponding camera_path and calibration parameters    ***"  << endl;
 

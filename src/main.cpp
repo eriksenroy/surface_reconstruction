@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
 
     //Launch the Visual odometry system
-    vo_system vo_system_object;
+   vo_system vo_system_object;
 
 
     ros::spin();
