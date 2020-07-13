@@ -37,9 +37,9 @@
 #include <iomanip>    // Needed for stream modifiers fixed and set precision
 
 
-//#include <Eigen/Dense>
-//using namespace Eigen;
-//#include <opencv2/core/eigen.hpp>
+#include <Eigen/Dense>
+using namespace Eigen;
+#include <opencv2/core/eigen.hpp>
 
 
 //using namespace CVD;
@@ -68,7 +68,7 @@ using namespace std;
 
 //pragma omp
 #include <omp.h>
-#pragma omp
+//#pragma omp
 
 //// file storage
 #include <time.h>
@@ -81,6 +81,9 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "camera_image");
     ros::start();
 
+//    srand ( (unsigned)time(0) );
+//    omp_set_dynamic(0);
+//    omp_set_nested(1);
 
     //Launch the Visual odometry system
    vo_system vo_system_object;
