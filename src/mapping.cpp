@@ -264,11 +264,12 @@ void semidense_mapping(DenseMapping *dense_mapper,SemiDenseMapping *semidense_ma
         semidense_mapper-> image_points_byFocal_sd = image_points_byFocal_sd_init.clone();
 
         semidense_mapper->do_init_semi=0;
-        semidense_mapper->depth_map = semidense_mapper->depth_map*0;
+
+        semidense_mapper->depth_map = semidense_mapper->depth_map;
 
         cv::Mat inv_depths_borrar = semidense_mapper-> inv_depths.clone();
-        cv::Mat depth_map_points_tracked = semidense_mapper->depth_map*0;
-        cv::Mat variance_points_tracked = semidense_mapper->depth_map*0;
+        cv::Mat depth_map_points_tracked = semidense_mapper->depth_map;//*0;
+        cv::Mat variance_points_tracked = semidense_mapper->depth_map;//*0;
         cv::Mat points3D_tracked = semidense_mapper->points3D_tracked.clone();
         cv::Mat points_aux(0,points3D_tracked.cols,CV_32FC1);
 
@@ -1216,7 +1217,7 @@ void semidense_mapping(DenseMapping *dense_mapper,SemiDenseMapping *semidense_ma
         if (num_keyframes %1 == 0 && num_keyframes >  semidense_mapper -> init_keyframes +1)
         {
             char buffer[150];
-            sprintf (buffer,(ros::package::getPath("dpptam")+"/src/map_and_poses/MAP%d.ply").c_str(),num_keyframes);
+            sprintf (buffer,(ros::package::getPath("surface_reconstruction")+"/src/map_and_poses/MAP%d.ply").c_str(),num_keyframes);
             points_aux2_print.convertTo(points_aux2_print,CV_64FC1);
 
             print_plane( points_aux2_print,buffer);

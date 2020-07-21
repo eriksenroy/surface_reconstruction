@@ -82,8 +82,8 @@ int main(int argc, char** argv)
     ros::start();
 
 //    srand ( (unsigned)time(0) );
-//    omp_set_dynamic(0);
-//    omp_set_nested(1);
+  omp_set_dynamic(0);
+  omp_set_nested(1);
 
     //Launch the Visual odometry system
    vo_system vo_system_object;

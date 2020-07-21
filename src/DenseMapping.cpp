@@ -140,8 +140,8 @@ void fullydense_mapping(DenseMapping *pdense_mapper,ros::Publisher *pub_cloud)
 
         cv::Mat depth_map;
 
-        cv::Mat variance_points_tracked = depth_map*0;
-        depth_map = depth_map*0;
+        cv::Mat variance_points_tracked = depth_map;//*0;
+        depth_map = depth_map;//*0;
         points6.convertTo(points6, CV_32FC1);
         get_inverse_depth(images,points6,inv_depths,depth_step,reference_image,discretization,mean_value,depth_map,1,variance_points_tracked);
         points6.convertTo(points6, CV_64FC1);
