@@ -65,3 +65,5 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_executable(surface_reconstruction ${SR_HEADER_FILES} ${SR_SOURCE_FILES})
 target_link_libraries(surface_reconstruction ${OpenCV_LIBS} ${catkin_LIBRARIES})
 
+add_executable(imgconverter src/imgconverter.cpp)
+target_link_libraries(imgconverter ${OpenCV_LIBS} ${catkin_LIBRARIES})
