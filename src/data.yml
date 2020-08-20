@@ -13,18 +13,18 @@ distortion: 1
 
 limit_grad: 0.80
 
-
+#######freiberg-dataset##########
 #camera_path: "/camera/rgb/image_color"
 #cameraMatrix: !!opencv-matrix
 #   rows: 3
 #   cols: 3
 #   dt: d
-#   data: [517.3,0., 516.5,0., 318.6, 255.3,0.,0.,1.]
+#   data: [525.0, 0.0, 319.5, 0.0, 525.0, 239.5, 0.0, 0.0, 1.0]
 #distCoeffs: !!opencv-matrix
 #   rows: 5
 #   cols: 1
 #   dt: d
-#   data: [ 0.2624,-0.9531,-0.0054,0.0026,1.1633 ]
+#   data: [ 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 ########  lab_unizar.bag  ############
@@ -40,7 +40,7 @@ limit_grad: 0.80
 #   dt: d
 #   data: [ 0.231222, -0.784899, -0.003257, -0.000105, 0.917205 ]
 
-#########  2020.bag  ############
+########  2020.bag  ############
 camera_path: "/image_converter/output_video"
 cameraMatrix: !!opencv-matrix
    rows: 3
@@ -53,6 +53,18 @@ distCoeffs: !!opencv-matrix
    dt: d
    data: [ 0.0232915539013, -0.0533579003495, -0.00144223613017, -0.000479820524549, 0.0126581209286 ]
 
+#### freiberg 3 ######
+#camera_path: "/image_converter/output_video"
+#cameraMatrix: !!opencv-matrix
+#   rows: 3
+#   cols: 3
+#   dt: d
+#   data: [ 537.960321985614, 0.0, 319.183641033155, 0.0, 539.597659163239, 247.053820358135, 0.0, 0.0, 1.0]
+#distCoeffs: !!opencv-matrix
+#   rows: 5
+#   cols: 1
+#   dt: d
+#   data: [ 0.0263704224826013, -0.10008645619921, 0.00313758409632316, 0.00242072236844001, 0.0 ]
 #######  lab_upenn.bag ##############
 #camera_path: "/mv_25000432/image_raw"
 #cameraMatrix: !!opencv-matrix
