@@ -150,6 +150,20 @@ public:
     double *stamps;
     ros::Time *stamps_ros;
 
+    //// INSERTION ROY ////
+    struct ground_pose
+            {
+            double tx;
+            double ty;
+            double tz;
+            double qx;
+            double qy;
+            double qz;
+            double qw;
+            };
+
+    ////////////////////////
+
     int last_cont_frames;
 
     cv::Mat distCoeffs,cameraMatrix;

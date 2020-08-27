@@ -7,6 +7,19 @@
 #include <iomanip>
 #include <iostream>
 #include <ros/package.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+/// sync libraries
+#include <image_transport/subscriber_filter.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/sync_policies/approximate_time.h>
+#include <sensor_msgs/Image.h>
+
+using namespace message_filters;
+
+
+
 
 vo_system::vo_system(){
 
@@ -24,10 +37,53 @@ vo_system::vo_system(){
 
 
     image_transport::ImageTransport it(nh);
-    sub1 = it.subscribe(camera_path,1, & vo_system::imgcb,this);
+//    sub1 = it.subscribe(camera_path,1, & vo_system::imgcb,this);
+//    chat = nh.subscribe(camera_path, 1, &vo_system::imgcb,this);
+///    image_tranzsport::SubscriberFilter sub1(it,camera_path,20);
+////    image_transport::SubscriberFilter sub1;
 
 
+    cout <<"before"<<endl;
+//    message_filters::Subscriber<sensor_msgs::Image>* m_imageSubscriber;     //(nh,camera_path,1000);
+    image_transport::SubscriberFilter* m_imageSubscriber;
+    message_filters::Subscriber<nav_msgs::Odometry>* m_poseMsgFilterSubscriber;       //(nh,"/groundtruth",1000);
+    typedef sync_policies::ApproximateTime<sensor_msgs::Image,nav_msgs::Odometry> SyncImageWithPose;
+    message_filters::Synchronizer<SyncImageWithPose>* m_imagePoseSynchronizer;
+
+    m_poseMsgFilterSubscriber = new message_filters::Subscriber<nav_msgs::Odometry>(nh,"/pose",3000);
+//    m_imageSubscriber = new message_filters::Subscriber<sensor_msgs::Image>(nh,camera_path,1000);
+    m_imageSubscriber = new image_transport::SubscriberFilter(it,camera_path,1000);
+
+    m_imagePoseSynchronizer = new message_filters::Synchronizer<SyncImageWithPose>(SyncImageWithPose(3000),*m_imageSubscriber,*m_poseMsgFilterSubscriber);
+    m_imagePoseSynchronizer->setAgePenalty(1.0);
+    m_imagePoseSynchronizer->registerCallback(&vo_system::imgcb, this);
+
+//message_filters::Subscriber<sensor_msgs::Image> image_sub(nh,camera_path,1);
+//message_filters::Subscriber<geometry_msgs::PoseStamped> groundtruth_sub(nh,"/groundtruth",1);
+//typedef sync_policies::ApproximateTime<sensor_msgs::Image,geometry_msgs::PoseStamped> MySyncPolicy;
+//Synchronizer<MySyncPolicy> sync(MySyncPolicy(100),image_sub,groundtruth_sub);
+//sync.registerCallback(boost::bind(&vo_system::imgcb,_1,_2));
+
+
+////    typedef Synchronizer<MySyncPolicy> Sync;
+//     Synchronizer<MySyncPolicy> sync(MySyncPolicy(10),subbing1,ground_pose);
+////    boost::shared_ptr<Sync> sync;
+    cout <<"before sync"<<endl;
+//    sync.registerCallback(boost::bind(&vo_system::imgcb,this, _1, _2));
     odom_pub = nh.advertise<nav_msgs::Odometry>("odom1", 50);
+    cout <<"after sync"<<endl;
+////    ground_pose = nh.subscribe("/groundtruth", 1000);
+
+    /// subcribe filter for ros image
+//    image_transport::SubscriberFilter imagesubscriber1;
+//    imagesubscriber1.subscribe(it,camera_path,32);
+//
+//    message_filters::Subscriber<sensor_msgs::Image> image1_sub(nh,camera_path,100);
+////    /// subscriber for StampedPose message filters
+//    message_filters::Subscriber<geometry_msgs::PointStamped> ground_pose(nh,"/groundtruth",100);
+//    typedef sync_policies::ApproximateTime<sensor_msgs::Image,geometry_msgs::PoseStamped> MySyncPolicy;
+//    Synchronizer<MySyncPolicy> sync(MySyncPolicy(10),image1_sub,ground_pose);
+//    sync.registerCallback(boost::bind(&imgcbb, _1, _2));
 
 
 
@@ -69,19 +125,21 @@ vo_system::vo_system(){
 
 
 
-void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg)
+void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg,const nav_msgs::Odometry::ConstPtr& msg2)//,const geometry_msgs::PoseStamped::ConstPtr& msg2
 {
     ///read images
     try {
         cv_bridge::CvImageConstPtr cv_ptr;
         cv_bridge::toCvShare(msg);
-        cv_ptr = cv_bridge::toCvShare(msg);
+        cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8);
 
         stamps_ros =  cv_ptr->header.stamp;
         stamps = cv_ptr->header.stamp.toSec();
         current_time = cv_ptr->header.stamp;
         image_frame_aux =  cv_ptr->image.clone();
         cont_frames++;
+        cout<<" image time:  "<<stamps_ros.nsec<<endl;
+        cout<<"pose time "<<msg2->header.stamp.nsec<<endl;
     }
     catch (const cv_bridge::Exception& e)
     {

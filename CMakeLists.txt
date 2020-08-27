@@ -8,11 +8,23 @@ add_definitions(-Wall -std=c++14 -Werror=return-type ${PCL_DEFINITIONS})
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs image_transport cv_bridge tf pcl_ros )
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation geometry_msgs sensor_msgs std_msgs image_transport cv_bridge tf pcl_ros message_filters)
+
+add_message_files(DIRECTORY msg FILES
+  EndEffectorState.msg
+  EndpointState.msg
+  EndpointStates.msg
+)
 
 
+generate_messages(DEPENDENCIES
+  geometry_msgs
+  sensor_msgs
+  std_msgs
+)
 
-catkin_package( CATKIN_DEPENDS roscpp sensor_msgs image_transport cv_bridge tf)
+
+catkin_package( CATKIN_DEPENDS roscpp message_generation geometry_msgs sensor_msgs std_msgs image_transport cv_bridge tf message_filters)
 
 set(SR_SOURCE_FILES
         src/main.cpp
@@ -67,3 +79,6 @@ target_link_libraries(surface_reconstruction ${OpenCV_LIBS} ${catkin_LIBRARIES})
 
 add_executable(imgconverter src/imgconverter.cpp)
 target_link_libraries(imgconverter ${OpenCV_LIBS} ${catkin_LIBRARIES})
+
+add_executable(filereader src/Filereader.cpp)
+target_link_libraries(filereader ${OpenCV_LIBS} ${catkin_LIBRARIES})

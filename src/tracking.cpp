@@ -787,18 +787,25 @@ void motion_model(vector<cv::Mat> &points_map,cv::Mat &R,cv::Mat &t,cv::Mat R_re
 void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
 {
 
-    visualization_msgs::Marker marker;
+    visualization_msgs::Marker marker, line_strip;
 
-    marker.header.frame_id = "surface_reconstruction/map";
+    marker.header.frame_id = line_strip.header.frame_id = "surface_reconstruction/map";
     marker.id=4;
+    line_strip.id=5;
     marker.type = visualization_msgs::Marker::LINE_LIST;
+    line_strip.type = visualization_msgs::Marker::LINE_STRIP;
     marker.scale.x=0.02;//0.2; 0.03
+    line_strip.scale.x=0.03;
     marker.pose.orientation.w=1.0;
+    line_strip.pose.orientation.w=1.0;
     marker.action=visualization_msgs::Marker::ADD;
+    line_strip.action=visualization_msgs::Marker::ADD;
     marker.color.r=1.0f;
     marker.color.a = 1.0;
+    line_strip.color.b=1.0;
+    line_strip.color.a = 1.0;
 
-    marker.points.clear();
+    //marker.points.clear();
 
     float d = 0.4;
 
@@ -855,10 +862,16 @@ void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
     marker.points.push_back(msgs_p4);
     marker.points.push_back(msgs_p4);
     marker.points.push_back(msgs_p1);
+    line_strip.points.push_back(msgs_o);
+    msgs_o.x = 0;
+    msgs_o.y = 0;
+    msgs_o.z = 0;
+    line_strip.points.push_back(msgs_o);
 
-    marker.header.stamp = ros::Time::now();
+    marker.header.stamp=line_strip.header.stamp = ros::Time::now();
 
     vis_pub->publish(marker);
+    vis_pub->publish(line_strip);
 
 }
 

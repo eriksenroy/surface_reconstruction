@@ -183,8 +183,9 @@ void semidense_mapping(DenseMapping *dense_mapper,SemiDenseMapping *semidense_ma
 
     C1 = -R1.t()*t1;
     C2 = -R2.t()*t2;
-
-
+//    cout<<"Rotation"<<R1<<endl;
+//    cout<<"translation"<<t1<<endl;
+//    cout<<"pose"<<C1<<endl;
     C2.convertTo(C2,CV_64FC1);
     C1.convertTo(C1,CV_64FC1);
 

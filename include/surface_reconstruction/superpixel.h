@@ -137,6 +137,19 @@ private:
 
 };
 
+class Ground_truth{
+public:
+    struct groundtruth{
+        double tx;
+        double ty;
+        double tz;
+        double qx;
+        double qy;
+        double qz;
+        double qw;
+    };
+private:
+};
 
 class Imagenes {
 public:
