@@ -60,7 +60,7 @@ public:
     vo_system();
 
 
-    void imgcb(const sensor_msgs::Image::ConstPtr& msg,const nav_msgs::Odometry::ConstPtr& msg2); // ,const geometry_msgs::PoseStamped::ConstPtr& msg2
+    void imgcb(const sensor_msgs::Image::ConstPtr& msg,const geometry_msgs::PoseStamped::ConstPtr& msg2); // ,const geometry_msgs::PoseStamped::ConstPtr& msg2
 
 
     DenseMapping dense_mapper;

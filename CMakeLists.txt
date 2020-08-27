@@ -17,14 +17,16 @@ add_message_files(DIRECTORY msg FILES
 )
 
 
-generate_messages(DEPENDENCIES
+generate_messages(
+  DEPENDENCIES
   geometry_msgs
   sensor_msgs
   std_msgs
 )
 
 
-catkin_package( CATKIN_DEPENDS roscpp message_generation geometry_msgs sensor_msgs std_msgs image_transport cv_bridge tf message_filters)
+catkin_package( CATKIN_DEPENDS roscpp message_runtime message_generation geometry_msgs sensor_msgs std_msgs image_transport cv_bridge tf message_filters)
+
 
 set(SR_SOURCE_FILES
         src/main.cpp

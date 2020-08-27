@@ -53,17 +53,18 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "file_reader_poses");
     ros::NodeHandle nh;
-    ros::Publisher dataPublisher = nh.advertise<geometry_msgs::PoseStamped>("/groundtruth", 1000);
+    ros::Publisher dataPublisher = nh.advertise<geometry_msgs::PoseStamped>("/groundtruth", 100);
 //    ros::Subscriber sub = nh.subscribe("/camera/rgb/image_color", 1, chatterCallback);
     v = readData();
-    cout << v[0][1]<<endl;
-    ros::Rate rate(100);
+    //cout << v[0][1]<<endl;
+    ros::Rate rate(10);
     while (ros::ok())
     {
         geometry_msgs::PoseStamped pose_msg;
         pose_msg.header.stamp.sec = floor(v[i][0]);
         float n_secs = v[i][0]-floor(v[i][0]);
-        pose_msg.header.stamp.nsec = n_secs*10000;
+
+        pose_msg.header.stamp.nsec = n_secs*1e9;
         pose_msg.pose.position.x = v[i][1];
         pose_msg.pose.position.y = v[i][2];
         pose_msg.pose.position.z = v[i][3];
@@ -71,14 +72,15 @@ int main(int argc, char** argv)
         pose_msg.pose.orientation.y = v[i][5];
         pose_msg.pose.orientation.z = v[i][6];
         pose_msg.pose.orientation.w = v[i][7];
-        while (dataPublisher.getNumSubscribers()==0)
-        {
-            rate.sleep();
-        }
+//        while (dataPublisher.getNumSubscribers()==0)
+//        {
+//            rate.sleep();
+//        }
+//        rate.sleep();
         dataPublisher.publish(pose_msg);
         rate.sleep();
         i++;
-        cout << i<<endl;
+        cout << n_secs<<endl;
     }
     ros::spin();
     return 0;

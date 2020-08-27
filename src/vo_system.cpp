@@ -46,17 +46,23 @@ vo_system::vo_system(){
     cout <<"before"<<endl;
 //    message_filters::Subscriber<sensor_msgs::Image>* m_imageSubscriber;     //(nh,camera_path,1000);
     image_transport::SubscriberFilter* m_imageSubscriber;
-    message_filters::Subscriber<nav_msgs::Odometry>* m_poseMsgFilterSubscriber;       //(nh,"/groundtruth",1000);
-    typedef sync_policies::ApproximateTime<sensor_msgs::Image,nav_msgs::Odometry> SyncImageWithPose;
+    message_filters::Subscriber<geometry_msgs::PoseStamped>* m_poseMsgFilterSubscriber;       //(nh,"/groundtruth",1000);
+    typedef sync_policies::ApproximateTime<sensor_msgs::Image,geometry_msgs::PoseStamped> SyncImageWithPose;
     message_filters::Synchronizer<SyncImageWithPose>* m_imagePoseSynchronizer;
 
-    m_poseMsgFilterSubscriber = new message_filters::Subscriber<nav_msgs::Odometry>(nh,"/pose",3000);
+    m_poseMsgFilterSubscriber = new message_filters::Subscriber<geometry_msgs::PoseStamped>(nh,"/groundtruth",1000);
 //    m_imageSubscriber = new message_filters::Subscriber<sensor_msgs::Image>(nh,camera_path,1000);
     m_imageSubscriber = new image_transport::SubscriberFilter(it,camera_path,1000);
 
-    m_imagePoseSynchronizer = new message_filters::Synchronizer<SyncImageWithPose>(SyncImageWithPose(3000),*m_imageSubscriber,*m_poseMsgFilterSubscriber);
-    m_imagePoseSynchronizer->setAgePenalty(1.0);
+    m_imagePoseSynchronizer = new message_filters::Synchronizer<SyncImageWithPose>(SyncImageWithPose(1000),*m_imageSubscriber,*m_poseMsgFilterSubscriber);
+    //m_imagePoseSynchronizer->setAgePenalty(1.0);
     m_imagePoseSynchronizer->registerCallback(&vo_system::imgcb, this);
+
+//    message_filters::Subscriber<sensor_msgs::Image> image_sub(nh,camera_path,10000);
+//    message_filters::Subscriber<geometry_msgs::PoseStamped> pose_sub(nh,"/groundtruth",10000);
+//    typedef sync_policies::ApproximateTime<sensor_msgs::Image,geometry_msgs::PoseStamped> MySyncPolicy;
+//    Synchronizer<MySyncPolicy> sync(MySyncPolicy(10000),image_sub,pose_sub);
+//    sync.registerCallback(boost::bind(&vo_system::imgcb,this,_1,_2));
 
 //message_filters::Subscriber<sensor_msgs::Image> image_sub(nh,camera_path,1);
 //message_filters::Subscriber<geometry_msgs::PoseStamped> groundtruth_sub(nh,"/groundtruth",1);
@@ -125,7 +131,7 @@ vo_system::vo_system(){
 
 
 
-void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg,const nav_msgs::Odometry::ConstPtr& msg2)//,const geometry_msgs::PoseStamped::ConstPtr& msg2
+void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg,const geometry_msgs::PoseStamped::ConstPtr& msg2)//,const geometry_msgs::PoseStamped::ConstPtr& msg2
 {
     ///read images
     try {
