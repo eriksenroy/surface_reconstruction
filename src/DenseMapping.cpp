@@ -1287,7 +1287,7 @@ void transformed_points_return_3Dpoints(cv::Mat &points3D_cam, cv::Mat &R,cv::Ma
 {
     cv::Mat t_r =  cv::repeat(t,1,points3D.cols);
     points3D_cam = R*points3D  + t_r;
-
+//    std::cout << "points3D_cam: " << points3D_cam<<endl;
     transformed_points = points3D_cam.clone();
 
     points3D_cam.colRange(0,points3D_cam.cols).rowRange(0,1) = -points3D_cam.colRange(0,points3D_cam.cols).rowRange(0,1) * fx;

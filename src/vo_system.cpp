@@ -15,7 +15,7 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <sensor_msgs/Image.h>
-
+#include <tf/transform_listener.h>
 using namespace message_filters;
 
 
@@ -50,13 +50,16 @@ vo_system::vo_system(){
     typedef sync_policies::ApproximateTime<sensor_msgs::Image,geometry_msgs::PoseStamped> SyncImageWithPose;
     message_filters::Synchronizer<SyncImageWithPose>* m_imagePoseSynchronizer;
 
-    m_poseMsgFilterSubscriber = new message_filters::Subscriber<geometry_msgs::PoseStamped>(nh,"/groundtruth",1000);
+    m_poseMsgFilterSubscriber = new message_filters::Subscriber<geometry_msgs::PoseStamped>(nh,"/groundtruth",10000);
 //    m_imageSubscriber = new message_filters::Subscriber<sensor_msgs::Image>(nh,camera_path,1000);
     m_imageSubscriber = new image_transport::SubscriberFilter(it,camera_path,1000);
 
-    m_imagePoseSynchronizer = new message_filters::Synchronizer<SyncImageWithPose>(SyncImageWithPose(1000),*m_imageSubscriber,*m_poseMsgFilterSubscriber);
+    m_imagePoseSynchronizer = new message_filters::Synchronizer<SyncImageWithPose>(SyncImageWithPose(10000),*m_imageSubscriber,*m_poseMsgFilterSubscriber);
     //m_imagePoseSynchronizer->setAgePenalty(1.0);
     m_imagePoseSynchronizer->registerCallback(&vo_system::imgcb, this);
+
+
+    tf::TransformListener listener;
 
 //    message_filters::Subscriber<sensor_msgs::Image> image_sub(nh,camera_path,10000);
 //    message_filters::Subscriber<geometry_msgs::PoseStamped> pose_sub(nh,"/groundtruth",10000);
@@ -109,7 +112,13 @@ vo_system::vo_system(){
     semidense_tracker.stamps = &stamps;
     semidense_tracker.image_frame = &image_frame_aux;
     semidense_tracker.stamps_ros = &stamps_ros ;
-
+    semidense_tracker.tx = &tx;
+    semidense_tracker.ty = &ty;
+    semidense_tracker.tz = &tz;
+    semidense_tracker.qx = &qx;
+    semidense_tracker.qy = &qy;
+    semidense_tracker.qz = &qz;
+    semidense_tracker.qw = &qw;
     ///Launch semidense tracker thread*/
     boost::thread thread_semidense_tracker(&ThreadSemiDenseTracker,&images,&semidense_mapper,&semidense_tracker,&dense_mapper,&Map,&odom_pub,&pub_poses,&vis_pub,&pub_image);
 
@@ -143,9 +152,17 @@ void vo_system::imgcb(const sensor_msgs::Image::ConstPtr& msg,const geometry_msg
         stamps = cv_ptr->header.stamp.toSec();
         current_time = cv_ptr->header.stamp;
         image_frame_aux =  cv_ptr->image.clone();
+        tx = msg2->pose.position.x;
+        ty = msg2->pose.position.y;
+        tz = msg2->pose.position.z;
+        qx = msg2->pose.orientation.x;
+        qy = msg2->pose.orientation.y;
+        qz = msg2->pose.orientation.z;
+        qw = msg2->pose.orientation.w;
         cont_frames++;
-        cout<<" image time:  "<<stamps_ros.nsec<<endl;
-        cout<<"pose time "<<msg2->header.stamp.nsec<<endl;
+        cout <<"frame nr: "<< cont_frames<<" tx: "<<tx<<" ty: "<<ty<<" tz: "<<tz<<" qx: "<<qx<<" qy: "<<qy<<" qz: "<<qz<<" qw: "<<qw<<endl;
+//        cout<<" image time:  "<<stamps_ros.nsec<<endl;
+//        cout<<"pose time "<<msg2->header.stamp.nsec<<endl;
     }
     catch (const cv_bridge::Exception& e)
     {

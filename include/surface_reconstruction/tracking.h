@@ -151,17 +151,8 @@ public:
     ros::Time *stamps_ros;
 
     //// INSERTION ROY ////
-    struct ground_pose
-            {
-            double tx;
-            double ty;
-            double tz;
-            double qx;
-            double qy;
-            double qz;
-            double qw;
-            };
-
+    double *tx,*ty,*tz,*qx,*qy,*qz,*qw;
+    cv::Mat Ro_g,to_g;
     ////////////////////////
 
     int last_cont_frames;
@@ -310,6 +301,11 @@ void join_maps(vector<cv::Mat> &points_map,cv::Mat R,cv::Mat t,vector<cv::Mat> p
 
 void print_times(cv::Mat &points, char buffer[]);
 
-void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub);
+void     publish_camera_frame(SemiDenseTracking *semidense_tracker, cv::Mat R,cv::Mat t,ros::Publisher *vis_pub);
+
+//////// inserted by roy
+/// Calculating the quaternium points from ground_truth PoseStamped msgs to rotation matrix.
+cv::Mat QuatToMat(SemiDenseTracking *semidense_tracker);
+cv::Mat TranslToMat(SemiDenseTracking *semidense_tracker);
 
 #endif

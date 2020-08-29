@@ -177,6 +177,7 @@ void semidense_mapping(DenseMapping *dense_mapper,SemiDenseMapping *semidense_ma
     cv::Mat R1,R2,C1,C2,t1,t2;
 
     R1 = images.Im[reference_image]->R;
+
     R2 = images.Im[images.getNumberOfImages()-1]->R;
     t1 = images.Im[reference_image]->t;
     t2 = images.Im[images.getNumberOfImages()-1]->t;
@@ -1149,7 +1150,7 @@ void semidense_mapping(DenseMapping *dense_mapper,SemiDenseMapping *semidense_ma
             cv::resize(depth_channel_show1,depth_channel_show1,cv::Size(round(depth_channel_show1.cols*2),round(depth_channel_show1.rows*2)),0,0,cv::INTER_LINEAR);
 
             char write_depth_map[150];
-            sprintf (write_depth_map,(ros::package::getPath("surface_reconstruction")+"/src/results_depth_maps/depth_keyframe%d_xFiltered.png").c_str(),num_keyframes);
+            sprintf (write_depth_map,(ros::package::getPath("surface_reconstruction")+"/src/results_depth_maps/depth_keyframe%d_xFiltered_Groundtruth.png").c_str(),num_keyframes);
             cv::imwrite(write_depth_map,depth_channel_show);
         }
 

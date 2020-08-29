@@ -85,8 +85,64 @@ SemiDenseTracking::SemiDenseTracking()
     boost::filesystem::remove_all((ros::package::getPath("surface_reconstruction")+"/src/results_depth_maps").c_str());
     boost::filesystem::create_directory((ros::package::getPath("surface_reconstruction")+"/src/results_depth_maps").c_str());
 
+    //////Insertion by Roy
+//    double m00,m01,m10,m11,m12,m21,m22,m20,m02;
+//    double qux =-0.5721;// +0.6574;
+//    double quy = 0.6521;//+0.6126;
+//    double quz = -0.3565;//-0.2949;
+//    double quw = 0.3469;//-0.3248;
+////    double qux = 0;
+////    double quy = 0;
+////    double quz = 0;
+////    double quw = 1;
+    double tux = 0.1163;//1.3405;
+    double tuy = -1.1498;//0.6266;
+    double tuz = 1.4015;//1.6575;
+//    double sqw = quw*quw;
+//    double sqx = qux*qux;
+//    double sqy = quy*quy;
+//    double sqz = quz*quz;
+//
+//    // invs (inverse square length) is only required if quaternion is not already normalised
+//    double invs = 1 / (sqx + sqy + sqz + sqw);
+//    m00 = ( sqx - sqy - sqz + sqw)*invs ; // since sqw + sqx + sqy + sqz =1/invs*invs
+//    m11 = (-sqx + sqy - sqz + sqw)*invs ;
+//    m22 = (-sqx - sqy + sqz + sqw)*invs ;
+//
+//    double tmp1 = qux*quy;
+//    double tmp2 = quz*quw;
+//    m10 = 2.0 * (tmp1 + tmp2)*invs ;
+//    m01 = 2.0 * (tmp1 - tmp2)*invs ;
+//
+//    tmp1 = qux*quz;
+//    tmp2 = quy*quw;
+//    m20 = 2.0 * (tmp1 - tmp2)*invs ;
+//    m02 = 2.0 * (tmp1 + tmp2)*invs ;
+//    tmp1 = quy*quz;
+//    tmp2 = qux*quw;
+//    m21 = 2.0 * (tmp1 + tmp2)*invs ;
+//    m12 = 2.0 * (tmp1 - tmp2)*invs ;
+//
+////    m00 = 1-2*(quy*quy)-2*(quy*quy);
+////    m01 = 2*qux*quy-2*quz*quw;
+////    m02 = 2*qux*quz+2*quy*quw;
+////    m10 = 2*qux*quy+2*quz*quw;
+////    m11 = 1-2*(qux*qux)-2*(quz*quz);
+////    m12 = 2*quy*quz-2*qux*quw;
+////    m20 = 2*qux*quz+2*quy*quw;
+////    m21 = 2*quy*quz+2*qux*quw;
+////    m22 = 1-2*(qux*qux)-2*(quy*quy);
+//
+//    R = (cv::Mat_<double>(3, 3) <<  m00,m01,m02,m10,m11,m12,m20,m21,m22);
+//    t = (cv::Mat_<double>(3, 1) << tux,tuy,tuz);
+//    std::cout<<"ground truth R:  " << R <<endl;
+
+    ////////////////////
     R = (cv::Mat_<double>(3, 3) <<  1,0,0,0,1,0,0,0,1);
     t = (cv::Mat_<double>(3, 1) << 0,0,0);
+//    std::cout<<"Estimated R:  " << R<< endl;
+
+
     cv::Mat R_kf;
     cv::Mat t_kf;
 
@@ -134,7 +190,9 @@ void SemiDenseTracking::set_local_maps (cv::Mat local_maps_aux,int pos_map)
 
 void SemiDenseTracking::init_poses () {
     cv::Mat poses_aux(0,3,CV_32FC1);
+
     poses = poses_aux.clone();
+    cout<<"poses init"<< poses<< endl;
 }
 
 void SemiDenseTracking::set_poses (cv::Mat pose_aux) {
@@ -784,30 +842,83 @@ void motion_model(vector<cv::Mat> &points_map,cv::Mat &R,cv::Mat &t,cv::Mat R_re
 }
 
 
-void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
+void     publish_camera_frame(SemiDenseTracking *semidense_tracker,cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
 {
 
-    visualization_msgs::Marker marker, line_strip;
+    visualization_msgs::Marker marker, line_strip, marker2;
 
     marker.header.frame_id = line_strip.header.frame_id = "surface_reconstruction/map";
     marker.id=4;
-    line_strip.id=5;
     marker.type = visualization_msgs::Marker::LINE_LIST;
-    line_strip.type = visualization_msgs::Marker::LINE_STRIP;
     marker.scale.x=0.02;//0.2; 0.03
-    line_strip.scale.x=0.03;
     marker.pose.orientation.w=1.0;
-    line_strip.pose.orientation.w=1.0;
     marker.action=visualization_msgs::Marker::ADD;
-    line_strip.action=visualization_msgs::Marker::ADD;
     marker.color.r=1.0f;
     marker.color.a = 1.0;
+
+    ///////////// inserted by ROY
+    line_strip.id=5;
+    line_strip.type = visualization_msgs::Marker::LINE_STRIP;
+    line_strip.scale.x=0.03;
+    line_strip.pose.orientation.w=1.0;
+    line_strip.action=visualization_msgs::Marker::ADD;
     line_strip.color.b=1.0;
     line_strip.color.a = 1.0;
 
+    marker2.header.frame_id = line_strip.header.frame_id = "surface_reconstruction/map";
+    marker2.id=6;
+    marker2.type = visualization_msgs::Marker::LINE_LIST;
+    marker2.scale.x=0.02;//0.2; 0.03
+    marker2.pose.orientation.w=1.0;
+    marker2.action=visualization_msgs::Marker::ADD;
+    marker2.color.g=1.0f;
+    marker2.color.a = 1.0;
     //marker.points.clear();
-
+////////////////////////////////////
     float d = 0.4;
+    /////// insertion roy/////////
+//    double m00,m01,m10,m11,m12,m21,m22,m20,m02;
+//    double qux = *semidense_tracker->qx;
+//    double quy = *semidense_tracker->qy;
+//    double quz = *semidense_tracker->qz;
+//    double quw = *semidense_tracker->qw;
+//    double tux = *semidense_tracker->tx;
+//    double tuy = *semidense_tracker->ty;
+//    double tuz = *semidense_tracker->tz;
+//    double sqw = quw*quw;
+//    double sqx = qux*qux;
+//    double sqy = quy*quy;
+//    double sqz = quz*quz;
+//
+//    // invs (inverse square length) is only required if quaternion is not already normalised
+//    double invs = 1 / (sqx + sqy + sqz + sqw);
+//    m00 = ( sqx - sqy - sqz + sqw)*invs ; // since sqw + sqx + sqy + sqz =1/invs*invs
+//    m11 = (-sqx + sqy - sqz + sqw)*invs ;
+//    m22 = (-sqx - sqy + sqz + sqw)*invs ;
+//
+//    double tmp1 = qux*quy;
+//    double tmp2 = quz*quw;
+//    m10 = 2.0 * (tmp1 + tmp2)*invs ;
+//    m01 = 2.0 * (tmp1 - tmp2)*invs ;
+//
+//    tmp1 = qux*quz;
+//    tmp2 = quy*quw;
+//    m20 = 2.0 * (tmp1 - tmp2)*invs ;
+//    m02 = 2.0 * (tmp1 + tmp2)*invs ;
+//    tmp1 = quy*quz;
+//    tmp2 = qux*quw;
+//    m21 = 2.0 * (tmp1 + tmp2)*invs ;
+//    m12 = 2.0 * (tmp1 - tmp2)*invs ;
+//
+//    cv::Mat RO = (cv::Mat_<double>(3, 3) <<  m00,m01,m02,m10,m11,m12,m20,m21,m22);
+    cv::Mat to = TranslToMat(semidense_tracker);
+    cv::Mat RO = QuatToMat(semidense_tracker);
+    cv::Mat Tcw_ground = (cv::Mat_<float>(4,4) << RO.at<double>(0,0),  RO.at<double>(0,1),  RO.at<double>(0,2), to.at<double>(0,0),
+            RO.at<double>(1,0),  RO.at<double>(1,1),  RO.at<double>(1,2), to.at<double>(1,0),
+            RO.at<double>(2,0),  RO.at<double>(2,1),  RO.at<double>(2,2), to.at<double>(2,0),
+            0,0,0,1 );
+    /////////
+
 
     cv::Mat Tcw = (cv::Mat_<float>(4,4) << R.at<double>(0,0),  R.at<double>(0,1),  R.at<double>(0,2), t.at<double>(0,0),
             R.at<double>(1,0),  R.at<double>(1,1),  R.at<double>(1,2), t.at<double>(1,0),
@@ -828,7 +939,16 @@ void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
     cv::Mat p2w = Twc*p2;
     cv::Mat p3w = Twc*p3;
     cv::Mat p4w = Twc*p4;
+////////// inserted by roy
 
+    cv::Mat Twc_g = Tcw_ground.inv();
+    cv::Mat ow_g = Twc_g*o;
+    cv::Mat p1w_g = Twc_g*p1;
+    cv::Mat p2w_g = Twc_g*p2;
+    cv::Mat p3w_g = Twc_g*p3;
+    cv::Mat p4w_g = Twc_g*p4;
+
+//////////////////////////////
     geometry_msgs::Point msgs_o,msgs_p1, msgs_p2, msgs_p3, msgs_p4;
     msgs_o.x=ow.at<float>(0);
     msgs_o.y=ow.at<float>(1);
@@ -845,6 +965,43 @@ void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
     msgs_p4.x=p4w.at<float>(0);
     msgs_p4.y=p4w.at<float>(1);
     msgs_p4.z=p4w.at<float>(2);
+
+    /////////inserted by roy
+
+    geometry_msgs::Point msgs_o_g,msgs_p1_g, msgs_p2_g, msgs_p3_g, msgs_p4_g;
+    msgs_o_g.x=ow_g.at<float>(0);
+    msgs_o_g.y=ow_g.at<float>(1);
+    msgs_o_g.z=ow_g.at<float>(2);
+    msgs_p1_g.x=p1w_g.at<float>(0);
+    msgs_p1_g.y=p1w_g.at<float>(1);
+    msgs_p1_g.z=p1w_g.at<float>(2);
+    msgs_p2_g.x=p2w_g.at<float>(0);
+    msgs_p2_g.y=p2w_g.at<float>(1);
+    msgs_p2_g.z=p2w_g.at<float>(2);
+    msgs_p3_g.x=p3w_g.at<float>(0);
+    msgs_p3_g.y=p3w_g.at<float>(1);
+    msgs_p3_g.z=p3w_g.at<float>(2);
+    msgs_p4_g.x=p4w_g.at<float>(0);
+    msgs_p4_g.y=p4w_g.at<float>(1);
+    msgs_p4_g.z=p4w_g.at<float>(2);
+
+    marker2.points.push_back(msgs_o_g);
+    marker2.points.push_back(msgs_p1_g);
+    marker2.points.push_back(msgs_o_g);
+    marker2.points.push_back(msgs_p2_g);
+    marker2.points.push_back(msgs_o_g);
+    marker2.points.push_back(msgs_p3_g);
+    marker2.points.push_back(msgs_o_g);
+    marker2.points.push_back(msgs_p4_g);
+    marker2.points.push_back(msgs_p1_g);
+    marker2.points.push_back(msgs_p2_g);
+    marker2.points.push_back(msgs_p2_g);
+    marker2.points.push_back(msgs_p3_g);
+    marker2.points.push_back(msgs_p3_g);
+    marker2.points.push_back(msgs_p4_g);
+    marker2.points.push_back(msgs_p4_g);
+    marker2.points.push_back(msgs_p1_g);
+    ////////////////////////
 
     marker.points.push_back(msgs_o);
     marker.points.push_back(msgs_p1);
@@ -866,11 +1023,12 @@ void     publish_camera_frame(cv::Mat R,cv::Mat t,ros::Publisher *vis_pub)
     msgs_o.x = 0;
     msgs_o.y = 0;
     msgs_o.z = 0;
-    line_strip.points.push_back(msgs_o);
+    line_strip.points.push_back(msgs_o_g);
 
     marker.header.stamp=line_strip.header.stamp = ros::Time::now();
 
     vis_pub->publish(marker);
+    vis_pub->publish(marker2);
     vis_pub->publish(line_strip);
 
 }
@@ -900,11 +1058,13 @@ void optimize_camera(int num_keyframes,SemiDenseTracking *semidense_tracker,Semi
     cv::Mat t_aux2 =  R*t_rel+t;
     cv::Mat R_aux2 =  R*R_rel;
 
+//    t_aux2 = TranslToMat(semidense_tracker);
+//    R_aux2 = QuatToMat(semidense_tracker);
     /// MOTION MODEL
     if (num_keyframes >  0 )
     {
-        t_aux2 =  R*t_rel+t;
-        R_aux2 =  R*R_rel;
+//        t_aux2 =  R*t_rel+t;
+//        R_aux2 =  R*R_rel;
 
         bool good_seed = false;
         motion_model(semidense_tracker->points_map_inImage,semidense_tracker->R,semidense_tracker->t,R_rel,t_rel,semidense_tracker->focalx,\
@@ -988,8 +1148,8 @@ void optimize_camera(int num_keyframes,SemiDenseTracking *semidense_tracker,Semi
     mTfBr.sendTransform(tf::StampedTransform(tfTcw,ros::Time::now(), "surface_reconstruction/map", "surface_reconstruction/visualization_marker"));
 
 
-
-    publish_camera_frame(R,t,vis_pub);
+//    cout << R<<endl;
+    publish_camera_frame(semidense_tracker, R,t,vis_pub);
 
 
 
@@ -1012,7 +1172,6 @@ void optimize_camera(int num_keyframes,SemiDenseTracking *semidense_tracker,Semi
     C= -R.t()*t;
 
     cv::Mat D_print = C.clone();
-
     double color_pose = 255;
     if (images.getNumberOfImages() < 5)
     {
@@ -1034,11 +1193,12 @@ void optimize_camera(int num_keyframes,SemiDenseTracking *semidense_tracker,Semi
         R2 =  images.Im[images.getNumberOfImages()-1]->R;
         t2 =  images.Im[images.getNumberOfImages()-1]->t;
 
-
+//        R2 = QuatToMat(semidense_tracker);
+//        t2 = TranslToMat(semidense_tracker);
         R1 =R.clone();
         t1 = t.clone();
-
-
+//        images.Im[images.getNumberOfImages()-1]->t = t2;
+//        images.Im[images.getNumberOfImages()-1]->R = R2;
         t2.convertTo(t2,CV_32FC1);
         R2.convertTo(R2,CV_32FC1);
 
@@ -1620,14 +1780,20 @@ void gauss_newton_ic(SemiDenseTracking *semidense_tracker,cv::Mat &points3D_cam_
     v.at<double>(1,0) = -init2.at<double>(4,0);
     v.at<double>(2,0) =- init2.at<double>(5,0);
 
-
-
+//    t1 = TranslToMat(semidense_tracker);
+//    R1 = QuatToMat(semidense_tracker);
     exp_SE3 (R1,t1,w,v);
-
+//    t1 = TranslToMat(semidense_tracker);
+//    R1 = QuatToMat(semidense_tracker);
     cv::Mat S,U,V;
+//    R1 = QuatToMat(semidense_tracker);
     cv::SVD::compute(R1,S,U,V,cv::SVD::FULL_UV);
     R1 = U*V;
-
+//    cv::Mat t1 = TranslToMat(semidense_tracker);
+//    cout <<"t1=  "<<t1<<endl;
+//    cout <<"t11=  "<<t11<<endl;
+//    R1 = QuatToMat(semidense_tracker);
+//    cout<<"R1 =   " << R1<<endl;
     R2 = R.clone();
     t2 = t.clone();
 
@@ -1636,9 +1802,14 @@ void gauss_newton_ic(SemiDenseTracking *semidense_tracker,cv::Mat &points3D_cam_
 //               where	R2 & t2 correspond to T_nw
 //                      R_p & t_p correspond to T_kw
 //                      R1 & T1 correspond to T_inc
-
-    t2 = R2*R_p.t()*(R1.t()*(t_p-t1)-t_p)+t2;
-    R2 = R2*R_p.t()*R1.t()*R_p;
+    if(*semidense_tracker->cont_frames<50){
+        R2 = QuatToMat(semidense_tracker);
+        t2 = TranslToMat(semidense_tracker);
+    }
+    else{
+        t2 = R2*R_p.t()*(R1.t()*(t_p-t1)-t_p)+t2;
+        R2 = R2*R_p.t()*R1.t()*R_p;
+    }
 
 
 
@@ -1648,7 +1819,7 @@ void gauss_newton_ic(SemiDenseTracking *semidense_tracker,cv::Mat &points3D_cam_
 
     cv::SVD::compute(R2,S,U,V,cv::SVD::FULL_UV);
     R2 = U*V;
-
+//    R2 = QuatToMat(semidense_tracker);
     if (error_check < error_opt )
     {
         error_opt = error_check;
@@ -1693,8 +1864,15 @@ void  gauss_estimation(SemiDenseTracking *semidense_tracker,cv::Mat &points3D_ca
     double error_f = error_p;
     double error_f1 = 10;
     double error_f2 = 0;
-    cv::Mat R=R2.clone();
-    cv::Mat t=t2.clone();
+    /// Insertion ROY
+//    cv::Mat R = QuatToMat(semidense_tracker);
+//    cv::Mat t =  TranslToMat(semidense_tracker);
+//    std::cout << "ground_truth R:  "<< R<<endl;
+    ///
+   cv::Mat R=R2.clone();
+  cv::Mat t=t2.clone();
+//    std::cout << "estimate R:  "<< R <<endl;
+
     while (fabs((error_f1 - error_f2)/error_f1) > tracking_th  &&  has_decreased > 0.5 && error_f1 > error_f2 && iter < iter_th )
     {
 
@@ -1718,6 +1896,8 @@ void  gauss_estimation(SemiDenseTracking *semidense_tracker,cv::Mat &points3D_ca
     R2=R.clone();
     t2=t.clone();
     error_p = error_f;
+//    double tox = *semidense_tracker->tx;
+//    cout <<"tx is: "<< tox<<endl;
 }
 
 
@@ -1811,6 +1991,7 @@ void exp_SO3(cv::Mat &R, cv::Mat &w)
     {R = eye + wx +1/2*(wx*wx);}
     else
     {R = eye+ sin(tetha)/tetha*wx + (1-cos(tetha))/(tetha*tetha)*(wx*wx);}
+
 }
 
 void  w2V(cv::Mat &V,double w1,double w2,double w3,cv::Mat &logR)
@@ -2151,4 +2332,67 @@ void join_maps(vector<cv::Mat> &points_map,cv::Mat R,cv::Mat t,vector<cv::Mat> p
         points_joined.push_back(points_joined_previous_map); points_map[i] = points_joined.clone();
 
     }
+}
+
+
+cv::Mat QuatToMat(SemiDenseTracking *semidense_tracker)
+{
+    double m00,m01,m10,m11,m12,m21,m22,m20,m02;
+    double qux = *semidense_tracker->qx;
+    double quy = *semidense_tracker->qy;
+    double quz = *semidense_tracker->qz;
+    double quw = *semidense_tracker->qw;
+    double tux = *semidense_tracker->tx;
+    double tuy = *semidense_tracker->ty;
+    double tuz = *semidense_tracker->tz;
+    double sqw = quw*quw;
+    double sqx = qux*qux;
+    double sqy = quy*quy;
+    double sqz = quz*quz;
+
+   //  invs (inverse square length) is only required if quaternion is not already normalised
+    double invs = 1 / (sqx + sqy + sqz + sqw);
+    m00 = ( sqx - sqy - sqz + sqw)*invs ; // since sqw + sqx + sqy + sqz =1/invs*invs
+    m11 = (-sqx + sqy - sqz + sqw)*invs ;
+    m22 = (-sqx - sqy + sqz + sqw)*invs ;
+
+    double tmp1 = qux*quy;
+    double tmp2 = quz*quw;
+    m10 = 2.0 * (tmp1 + tmp2)*invs ;
+    m01 = 2.0 * (tmp1 - tmp2)*invs ;
+
+    tmp1 = qux*quz;
+    tmp2 = quy*quw;
+    m20 = 2.0 * (tmp1 - tmp2)*invs ;
+    m02 = 2.0 * (tmp1 + tmp2)*invs ;
+    tmp1 = quy*quz;
+    tmp2 = qux*quw;
+    m21 = 2.0 * (tmp1 + tmp2)*invs ;
+    m12 = 2.0 * (tmp1 - tmp2)*invs ;
+
+//    m00 = 1-2*(quy*quy)-2*(quy*quy);
+//    m01 = 2*qux*quy-2*quz*quw;
+//    m02 = 2*qux*quz+2*quy*quw;
+//    m10 = 2*qux*quy+2*quz*quw;
+//    m11 = 1-2*(qux*qux)-2*(quz*quz);
+//    m12 = 2*quy*quz-2*qux*quw;
+//    m20 = 2*qux*quz+2*quy*quw;
+//    m21 = 2*quy*quz+2*qux*quw;
+//    m22 = 1-2*(qux*qux)-2*(quy*quy);
+
+    cv::Mat RO_g = (cv::Mat_<double>(3, 3) <<  m00,m01,m02,m10,m11,m12,m20,m21,m22);
+
+
+    return RO_g;
+}
+
+cv::Mat TranslToMat(SemiDenseTracking *semidense_tracker)
+{
+    double tux = *semidense_tracker->tx;
+    double tuy = *semidense_tracker->ty;
+    double tuz = *semidense_tracker->tz;
+    cv::Mat to = (cv::Mat_<double>(3, 1) << tux,tuy,tuz);
+
+    return to;
+
 }

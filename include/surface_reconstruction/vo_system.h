@@ -80,7 +80,9 @@ public:
     image_transport::Publisher pub_image;
 
 
-
+ //////////// inserted by roy
+    double tx,ty,tz,qx,qy,qz,qw;
+////////////////////////////////
 
     ros::Publisher odom_pub;
     ros::Subscriber chat;
@@ -91,28 +93,8 @@ public:
     ros::Publisher vis_pub;
 
 
-    /// inserted by roy
 
 
-    //Roy inserting
-
-//    message_filters::Subscriber<sensor_msgs::Image>* m_imageSubscriber;     //(nh,camera_path,1000);
-//    message_filters::Subscriber<geometry_msgs::PoseStamped>* m_poseMsgFilterSubscriber;       //(nh,"/groundtruth",1000);
-//    typedef message_filters::sync_policies::ApproximateTime<geometry_msgs::PoseStamped,sensor_msgs::Image> SyncImageWithPose;
-//    message_filters::Synchronizer<SyncImageWithPose>* m_imagePoseSynchronizer;
-//
-//    typedef image_transport::SubscriberFilter ImageSubscriber;
-//    typedef message_filters::Subscriber<geometry_msgs::PoseStamped> PoseSubscriber2;
-//    ImageSubscriber subbing1;
-//    PoseSubscriber2 groundpose;
-//    subbing1(it_,"/camera/rgb/image_color",1);
-//
-//
-//
-//    sync(MySyncPolicy(10),sub1,ground_pose)
-//    {
-//        sync.registerCallback( boost::bind( &vo_system::imgcb, this, _1, _2 ) );
-//    }
 
 };
 #endif
